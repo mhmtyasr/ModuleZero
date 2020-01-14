@@ -11,16 +11,23 @@
 import React from 'react';
 import { Login } from './scenes/Login/login';
 import { View } from 'native-base';
+import {Provider} from 'mobx-react';
+import initializeStores from './stores/storeInitializer';
 
-const App = () => {
-  return (
-   
+const stores =initializeStores();
+
+export  class App extends React.Component {
+
+  render() {
+    return (
+      <Provider {...stores}>
     <View style={{flex:1}}>
      <Login/>
      </View>
-    
+     </Provider>
   );
-};
+}
+}
 
 
 
