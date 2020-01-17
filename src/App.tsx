@@ -9,26 +9,31 @@
  */
 
 import React from 'react';
-import { Login } from './scenes/Login/login';
-import { View } from 'native-base';
-import {Provider} from 'mobx-react';
+import { Provider } from 'mobx-react';
 import initializeStores from './stores/storeInitializer';
+import RoutingContainer from './components/routing/routingConfig';
 
-const stores =initializeStores();
 
-export  class App extends React.Component {
+
+const stores = initializeStores();
+
+
+export default class App extends React.Component {
 
   render() {
     return (
       <Provider {...stores}>
-    <View style={{flex:1}}>
-     <Login/>
-     </View>
-     </Provider>
-  );
-}
+      <RoutingContainer />  
+      </Provider>
+    );
+  }
 }
 
 
 
-export default App;
+
+
+
+
+
+

@@ -3,6 +3,7 @@ import { action, observable } from 'mobx';
 
 import LoginModel from '../models/Login/loginModel';
 import tokenAuthService from '../services/tokenAuth/tokenAuthService';
+import { AsyncStorage } from 'react-native';
 
 
 
@@ -10,19 +11,20 @@ import tokenAuthService from '../services/tokenAuth/tokenAuthService';
 class AuthenticationStore {
  
   
-  public  isAuthenticated(): boolean {
-    // if (!abp.session.userId) return false;
-
-    return true;
+  public  async isAuthenticated(): Promise<boolean> {
+    return await AsyncStorage.getItem("userId") ? true :false;
   }
 
   @action
   public async login(model: LoginModel) {
+   
     let result = await tokenAuthService.authenticate({
       userNameOrEmailAddress: model.userNameOrEmailAddress,
-      password: model.password
+      password: model.password,
+      rememberClient:true
     });
 
+    console.log("userId",result.accessToken);
    
 
   }

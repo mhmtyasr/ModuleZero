@@ -6,10 +6,12 @@ import axios from 'axios';
 
 
 const http = axios.create({
-  baseURL: "http://reactnative.demo.aspnetzero.com",
+  baseURL: "http://api.eventcloud.aspnetboilerplate.com/",
   timeout: 30000,
   paramsSerializer: function(params) {
-    return JSON.stringify(params);
+    return qs.stringify(params, {
+      encode: false,
+    });
   },
 });
 

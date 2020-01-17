@@ -29,18 +29,26 @@ export interface State {
 @inject('authenticationStore')
 @observer
 export class Login extends React.Component<Props, State> {
-
+  static navigationOptions({ navigation }: { navigation: any }) {
+    return {
+      headerShown: false,
+      title: navigation.getParam('itemId'),
+      visible: false
+    };
+  };
   constructor(props) {
     super(props);
-    this.state = { email: "admin", password: "123456" }
-
+    this.state = {
+      email: "", password: ""
+    }
   }
-  login = () => {
-    this.props.authenticationStore.login({ userNameOrEmailAddress: this.state.email, password: this.state.password })
+
+  login=()=>{
+    this.props.authenticationStore!.login({ userNameOrEmailAddress: this.state.email, password: this.state.password,rememberClient:false })
   }
 
   render() {
-    debugger;
+
     return (
       <KeyboardAvoidingView
         style={styles.container}
@@ -62,7 +70,7 @@ export class Login extends React.Component<Props, State> {
             keyboardType="default"
             underlineColorAndroid='transparent'
             onChangeText={(password) => this.setState({ password })} />
-          <Button style={styles.button} onPress={() => this.login()}>
+          <Button style={styles.button} onPress={()=>this.login()}>
             <Text style={styles.buttonText} >Login</Text>
           </Button>
           <TouchableOpacity onPress={() => { }} style={styles.textButton}>
