@@ -4,9 +4,7 @@ import http from '../httpService';
 
 class TokenAuthService {
   public async authenticate(authenticationInput: AuthenticationModel): Promise<AuthenticationResultModel> {
-   debugger;
     let result = await http.post('api/TokenAuth/Authenticate', authenticationInput);
-    debugger;
     return result.data.result;
   }
 }

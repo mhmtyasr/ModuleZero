@@ -15,6 +15,7 @@
     "mobx": "^5.15.2",
     "mobx-react": "^5.4.4",
     "native-base": "^2.13.8",
+    "qs": "^6.9.1",
     "react": "16.8.6",
     "react-native": "0.60.5",
     "react-native-gesture-handler": "^1.5.3",

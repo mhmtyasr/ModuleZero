@@ -16,7 +16,7 @@ import RoutingContainer from './components/routing/routingConfig';
 
 
 const stores = initializeStores();
-
+console.disableYellowBox=true;
 
 export default class App extends React.Component {
 
