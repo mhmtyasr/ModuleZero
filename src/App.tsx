@@ -15,15 +15,28 @@ import RoutingContainer from './components/routing/routingConfig';
 
 
 
-const stores = initializeStores();
-console.disableYellowBox=true;
 
-export default class App extends React.Component {
+const stores = initializeStores();
+console.disableYellowBox = true;
+interface Props {
+
+}
+interface State {
+  appState:any
+}
+
+export default class App extends React.Component<Props,State> {
+  constructor(props) {
+    super(props);
+  }
+
 
   render() {
     return (
       <Provider {...stores}>
-      <RoutingContainer />  
+       
+         <RoutingContainer/>
+        
       </Provider>
     );
   }

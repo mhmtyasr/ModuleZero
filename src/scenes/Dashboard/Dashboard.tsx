@@ -22,8 +22,7 @@ export class Dasboard extends React.Component<Props, State> {
 
   render() {
     return (
-      
-     <Button  onPress={() => this.props.navigation.openDrawer()}><Text>asdasdasd</Text></Button>
+     <Button  onPress={() => this.props.navigation.openDrawer()}><Text>asdasdasd12</Text></Button>
     );
   }
 }

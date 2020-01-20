@@ -7,16 +7,17 @@ import {
   Image,
   Dimensions,
   KeyboardAvoidingView,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import { inject, observer } from 'mobx-react'
-import { Button, Container, Toast, Root, Spinner } from "native-base"
+import { Button, Root, Icon } from "native-base"
 
 import { grid } from "../../style/gridStyle"
 import AuthenticationStore from '../../stores/authenticationStore';
 import { NavigationStackProp } from 'react-navigation-stack';
 import Stores from '../../stores/storeIdentifier';
-import LoadingStore from '../../stores/loadingStore';
+import { TenantModal } from '../../components/tenantModal/tenantModal';
+
 
 export interface Props {
   authenticationStore?: AuthenticationStore;
@@ -27,11 +28,12 @@ export interface Props {
 export interface State {
   email: string;
   password: string;
+  isTenantModalOpen: boolean;
 }
 
 
 
-@inject(Stores.AuthenticationStore)
+@inject(Stores.AuthenticationStore, Stores.TenantStore)
 @observer
 export class Login extends React.Component<Props, State> {
   static navigationOptions({ navigation }: { navigation: any }) {
@@ -44,7 +46,7 @@ export class Login extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = {
-      email: "", password: ""
+      email: "", password: "", isTenantModalOpen: false
     }
   }
 
@@ -53,6 +55,10 @@ export class Login extends React.Component<Props, State> {
       .login({ userNameOrEmailAddress: this.state.email, password: this.state.password, rememberClient: false })
       .then(() => this.props.navigation.navigate('Auth'));
   }
+  toggleTenantModal = () => {
+    this.setState({ isTenantModalOpen: !this.state.isTenantModalOpen })
+  }
+
 
   render() {
 
@@ -62,10 +68,18 @@ export class Login extends React.Component<Props, State> {
           style={styles.container}
           behavior="padding"
         >
+
           <View style={[grid.center, styles.logoContainer]}>
             <Image source={require('../../image/abp-logo-long.png')} style={styles.logo} />
           </View>
           <View style={styles.card}>
+            <View style={styles.tenantText}>
+              <Text>Geçerli müşteri:</Text>
+              <Text> Default</Text>
+              <TouchableOpacity onPress={() => this.toggleTenantModal()} >
+                <Text style={{ color: "#00b5ec" }}> (Değiştir)</Text>
+              </TouchableOpacity>
+            </View>
             <TextInput style={styles.inputs}
               placeholder="Email Adress"
               keyboardType="email-address"
@@ -85,11 +99,14 @@ export class Login extends React.Component<Props, State> {
               <Text> Forget Password</Text>
             </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView> 
-        </Root>
+        </KeyboardAvoidingView>
+        <TenantModal loading={this.state.isTenantModalOpen}  toggleModal={()=>this.toggleTenantModal()}/>
+      </Root>
     );
   }
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -101,8 +118,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     marginLeft: 30,
     marginRight: 30,
-
     shadowColor: "#000",
+    padding: 20,
     shadowOffset: {
       width: 0,
       height: 12,
@@ -126,8 +143,6 @@ const styles = StyleSheet.create({
     borderBottomColor: '#F5FCFF',
     backgroundColor: '#DCDCDC',
     borderRadius: 12,
-    marginLeft: 20,
-    marginRight: 20,
     marginTop: 20,
     height: 40,
     paddingLeft: 10,
@@ -151,7 +166,22 @@ const styles = StyleSheet.create({
   textButton: {
     alignItems: "center",
     height: 40
-  }
+  },
+  tenantText: {
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    borderBottomColor: "#DCDCDC",
+    borderBottomWidth: 2,
+    height: 60
+  },
+  modalBackground: {
+    flex: 1,
+    alignItems: 'center',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    backgroundColor: 'rgba(191, 191, 191, 0.5)'
+  },
 
 });
 

@@ -1,7 +1,15 @@
-function isEmpty(obj) {
-    for(var key in obj) {
-        if(obj.hasOwnProperty(key))
-            return false;
-    }
-    return true;
+import { Toast } from "native-base";
+
+
+enum toastType{
+  "danger","success","warning"
 }
+
+export const _toast=(message:string)=>{
+    Toast.show({
+      text: message,
+      duration: 2000,
+      type:"danger"
+    })
+  }
+  
