@@ -4,11 +4,12 @@ import { Button, Icon } from "native-base";
 
 export interface TenantModalProps {
     loading: boolean;
-    toggleModal:any;
+    toggleModal:()=>void;
+    isTenantAvaible:(tenantName:string)=>void
   }
   
   export const TenantModal = (props: TenantModalProps) => {
-    const { loading,toggleModal } = props;
+    const { loading,toggleModal,isTenantAvaible } = props;
     return (
       <Modal
         transparent={true}
@@ -16,19 +17,18 @@ export interface TenantModalProps {
         visible={loading}
         onRequestClose={() => { console.log('close modal') }}>
         <View style={styles.modalBackground}>
-  
           <View style={styles.card}>
             <TouchableOpacity onPress={() => toggleModal()} style={{ position: "absolute", right: -10, top: -10 }} >
               <Icon type="AntDesign" name="closecircle" style={{ fontSize: 30 }}></Icon>
             </TouchableOpacity>
             <TextInput style={styles.inputs}
+             onSubmitEditing={()=>isTenantAvaible(this.tenantName._lastNativeText)}
               placeholder="Tenant Name"
-              secureTextEntry={true}
               keyboardType="default"
               underlineColorAndroid='transparent'
-              ref={this.myRef} 
+              ref={(ref:any) => { this.tenantName = ref }}
                />
-            <Button style={styles.button} onPress={() => this.login()}>
+            <Button  warning style={styles.button} onPress={() => isTenantAvaible(this.tenantName._lastNativeText)}>
               <Text style={styles.buttonText} >Tenant Değiştir</Text>
             </Button>
           </View>
@@ -90,7 +90,6 @@ export interface TenantModalProps {
         alignItems: 'center',
         marginBottom: 20,
         borderRadius: 30,
-        backgroundColor: "#00b5ec"
       },
       buttonText: {
         color: "white",

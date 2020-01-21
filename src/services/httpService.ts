@@ -1,16 +1,12 @@
 
 import axios from 'axios';
-import { Toast } from 'native-base';
 import NetInfo, { NetInfoState } from "@react-native-community/netinfo"
-
-import { _toast } from "../utils/utils"
-
-
+import { _toast } from '../utils/utils';
 
 const qs = require('qs');
+
 let showFunc: any;
 let hideFunc: any;
-let isConnect: boolean;
 
 
 export class httpServiceFunc {
@@ -24,25 +20,26 @@ export class httpServiceFunc {
 
 
 
-
 const http = axios.create({
-  baseURL: "http://api.eventcloud.aspnetboilerplate.com/",
+  baseURL: "http://www.proximitydeskqa.de",
   timeout: 30000,
   paramsSerializer: function (params) {
-    return qs.stringify(params);
+    return qs.stringify(params,{
+      encode: false,
+    });
   },
 });
 
 http.interceptors.request.use(
   function (config) {
     showFunc();
-
-    // if (!!abp.auth.getToken()) {
-    //   config.headers.common['Authorization'] = 'Bearer ' + abp.auth.getToken();
-    // }
-
-    // config.headers.common['.AspNetCore.Culture'] = abp.utils.getCookieValue('Abp.Localization.CultureName');
-     config.headers.common['Abp.TenantId'] = 1;
+    
+    //  if (!!abp.auth.getToken()) {
+    //    config.headers.common['Authorization'] = 'Bearer ' + abp.auth.getToken();
+    //  }
+   
+    //   config.headers.common['.AspNetCore.Culture'] = abp.utils.getCookieValue('Abp.Localization.CultureName');
+    //   config.headers.common['Abp.TenantId'] = abp.multiTenancy.getTenantIdCookie();
 
     return config;
   },

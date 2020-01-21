@@ -4,7 +4,7 @@ class LoginModel {
   //tenancyName!: string;
   userNameOrEmailAddress: string;
   password: string;
-  rememberClient:boolean;
+  rememberMe:boolean;
   
   
 }

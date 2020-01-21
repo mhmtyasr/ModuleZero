@@ -17,11 +17,15 @@ import AuthenticationStore from '../../stores/authenticationStore';
 import { NavigationStackProp } from 'react-navigation-stack';
 import Stores from '../../stores/storeIdentifier';
 import { TenantModal } from '../../components/tenantModal/tenantModal';
+import AccountStore from '../../stores/accountStore';
+import TenantAvailabilityState from '../../services/account/dto/tenantAvailabilityState';
+import { _toast } from '../../utils/utils';
+
 
 
 export interface Props {
   authenticationStore?: AuthenticationStore;
-  // loadingStore?:LoadingStore;
+  accountStore?: AccountStore;
   navigation?: NavigationStackProp;
 }
 
@@ -29,13 +33,15 @@ export interface State {
   email: string;
   password: string;
   isTenantModalOpen: boolean;
+  tenancyName:string
 }
 
 
 
-@inject(Stores.AuthenticationStore, Stores.TenantStore)
+@inject(Stores.AuthenticationStore, Stores.AccountStore)
 @observer
 export class Login extends React.Component<Props, State> {
+  password: any;
   static navigationOptions({ navigation }: { navigation: any }) {
     return {
       headerShown: false,
@@ -46,13 +52,13 @@ export class Login extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = {
-      email: "", password: "", isTenantModalOpen: false
+      email: "", password: "", isTenantModalOpen: false,tenancyName:""
     }
   }
 
   login = () => {
     this.props.authenticationStore!
-      .login({ userNameOrEmailAddress: this.state.email, password: this.state.password, rememberClient: false })
+      .login({ userNameOrEmailAddress: this.state.email, password: this.state.password, rememberMe: false })
       .then(() => this.props.navigation.navigate('Auth'));
   }
   toggleTenantModal = () => {
@@ -60,34 +66,58 @@ export class Login extends React.Component<Props, State> {
   }
 
 
-  render() {
+  isTenanAvaible = async (_tenancyName: string) => {
+    await this.props.accountStore!.isTenantAvailable(_tenancyName);
 
+    const { tenant } = this.props.accountStore!;
+    switch (tenant.state) {
+      case TenantAvailabilityState.Available:
+        this.toggleTenantModal();
+        this.setState({ tenancyName: _tenancyName });
+    
+        return;
+      case TenantAvailabilityState.InActive:
+        _toast('TenantIsNotActive',"danger");
+        break;
+      case TenantAvailabilityState.NotFound:
+        _toast('TenantIsNotActive',"danger");
+        break;
+    }
+
+
+  }
+
+  render() {
+    
     return (
       <Root>
         <KeyboardAvoidingView
           style={styles.container}
           behavior="padding"
         >
-
           <View style={[grid.center, styles.logoContainer]}>
             <Image source={require('../../image/abp-logo-long.png')} style={styles.logo} />
           </View>
           <View style={styles.card}>
             <View style={styles.tenantText}>
               <Text>Geçerli müşteri:</Text>
-              <Text> Default</Text>
+              <Text> {this.state.tenancyName}</Text>
               <TouchableOpacity onPress={() => this.toggleTenantModal()} >
                 <Text style={{ color: "#00b5ec" }}> (Değiştir)</Text>
               </TouchableOpacity>
             </View>
             <TextInput style={styles.inputs}
               placeholder="Email Adress"
+              onSubmitEditing={()=>this.password.focus()}
+              returnKeyType="next"
               keyboardType="email-address"
               underlineColorAndroid='transparent'
               onChangeText={(email) => this.setState({ email })} />
-
             <TextInput style={styles.inputs}
+              returnKeyType="done"
+              ref={(ref:any) => { this.password = ref }}
               placeholder="Password"
+              onSubmitEditing={() => this.login()}
               secureTextEntry={true}
               keyboardType="default"
               underlineColorAndroid='transparent'
@@ -100,7 +130,7 @@ export class Login extends React.Component<Props, State> {
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
-        <TenantModal loading={this.state.isTenantModalOpen}  toggleModal={()=>this.toggleTenantModal()}/>
+        <TenantModal loading={this.state.isTenantModalOpen} isTenantAvaible={(tenantName: string) => this.isTenanAvaible(tenantName)} toggleModal={() => this.toggleTenantModal()} />
       </Root>
     );
   }
@@ -116,8 +146,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: "white",
-    marginLeft: 30,
-    marginRight: 30,
+    marginHorizontal: 30,
     shadowColor: "#000",
     padding: 20,
     shadowOffset: {
@@ -132,12 +161,12 @@ const styles = StyleSheet.create({
 
   },
   logo: {
-    resizeMode: 'contain',
-    width: Math.round(Dimensions.get('window').width - 50),
-    marginLeft: 25
+    resizeMode: "contain",
+    width: Math.round(Dimensions.get('window').width - 60),
   },
   logoContainer: {
-    marginVertical: 50
+    width: Math.round(Dimensions.get('window').width - 60),
+    margin: 30,
   },
   inputs: {
     borderBottomColor: '#F5FCFF',
@@ -146,7 +175,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     height: 40,
     paddingLeft: 10,
-
   },
   button: {
     height: 40,
@@ -165,7 +193,7 @@ const styles = StyleSheet.create({
   },
   textButton: {
     alignItems: "center",
-    height: 40
+    height: 20
   },
   tenantText: {
     alignItems: "center",
